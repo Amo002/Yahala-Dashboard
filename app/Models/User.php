@@ -35,7 +35,7 @@ class User extends Authenticatable
 
 
 
-    
+
     public function merchant()
     {
         return $this->belongsTo(Merchant::class);
@@ -54,5 +54,15 @@ class User extends Authenticatable
     public function sentInvites()
     {
         return $this->hasMany(Invite::class, 'created_by');
+    }
+
+    public function createdRoles()
+    {
+        return $this->hasMany(\Spatie\Permission\Models\Role::class, 'created_by');
+    }
+    
+    public function createdPermissions()
+    {
+        return $this->hasMany(\Spatie\Permission\Models\Permission::class, 'created_by');
     }
 }

@@ -11,10 +11,10 @@ return new class extends Migration {
             $table->id();
             $table->string('email')->index();
             $table->timestamp('expires_at')->nullable();
-            $table->unsignedBigInteger('created_by'); // user who sent the invite
+            $table->unsignedBigInteger('created_by');
             $table->timestamps();
 
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

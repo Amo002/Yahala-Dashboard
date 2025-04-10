@@ -23,23 +23,26 @@ class CoreSeeder extends Seeder
 
         // Create Super Admin User
         $superAdmin = User::firstOrCreate(
-            ['email' => 'admin@yahala.com'],
+            ['email' => 'admin@ex.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin'),
                 'team_id' => $systemTeam->id,
             ]
         );
 
         // Create Super Admin Role
         $superAdminRole = Role::firstOrCreate([
-            'name' => 'Super Admin',
-            'slug' => 'super_admin',
+            'name' => 'super_admin',
             'guard_name' => 'web',
             'team_id' => $systemTeam->id,
-            'merchant_id' => null, // global
+            'merchant_id' => null,
             'created_by' => $superAdmin->id,
+        ], [
+            'label' => 'Super Admin'
         ]);
+
+
 
         // Permission group: system
         $permissions = [

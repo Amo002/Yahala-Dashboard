@@ -8,12 +8,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('invited_by')->nullable()->after('team_id');
+            $table->unsignedBigInteger('invited_by')->nullable()->after('merchant_id');
 
-            $table->foreign('invited_by')
-                ->references('id')
-                ->on('users')
-                ->nullOnDelete();
+            $table->foreign('invited_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 

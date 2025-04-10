@@ -1,0 +1,14 @@
+[90m= [39m[34;4mApp\Models\User[39;24m {#6207
+    [34mid[39m: [35m1[39m,
+    [34mmerchant_id[39m: [36mnull[39m,
+    [34mteam_id[39m: [35m1[39m,
+    [34minvited_by[39m: [36mnull[39m,
+    [34mname[39m: "[32mSuper Admin[39m",
+    [34memail[39m: "[32madmin@ex.com[39m",
+    [34memail_verified_at[39m: [36mnull[39m,
+    #[33mpassword[39m: "[32m$2y$12$AUTxi5Li6hve3eylji.DiecolP2Zme4y/lfF.BLWvtouu9fbpO.7K[39m",
+    #[33mremember_token[39m: "[32m3ZrAOcc9HWpr3VtTK6YlRyfO0Lm0Koq3fJyrEZZe7qoFpeeSBpaIArHfORBn[39m",
+    [34mcreated_at[39m: "[32m2025-04-10 07:34:14[39m",
+    [34mupdated_at[39m: "[32m2025-04-10 07:34:14[39m",
+  }
+

@@ -7,16 +7,6 @@
 
     <form method="GET" action="{{ route('admin.users.index') }}" class="mb-4">
         <div class="row g-2 align-items-end">
-            <div class="col-md-3">
-                <label for="team" class="form-label">Filter by Team</label>
-                <select name="team" id="team" class="form-select">
-                    <option value="">All Teams</option>
-                    <option value="system_team" {{ request('team') == 'system_team' ? 'selected' : '' }}>System Team
-                    </option>
-                    <option value="merchant_team" {{ request('team') == 'merchant_team' ? 'selected' : '' }}>Merchant Team
-                    </option>
-                </select>
-            </div>
 
             <div class="col-md-3">
                 <label for="merchant_id" class="form-label">Filter by Merchant</label>
@@ -45,6 +35,7 @@
             <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Invited By</th>
                 <th>Role(s)</th>
                 <th style="width: 160px;">Actions</th>
             </tr>
@@ -60,11 +51,13 @@
                     </td>
                     <td>{{ $user->email }}</td>
                     <td>
+                        {{ $user->inviter?->name ?? 'System Seeder' }}
+                    </td>
+                    <td>
                         {{ $user->roles->pluck('label')->filter()->join(', ') ?: $user->getRoleNames()->join(', ') }}
                     </td>
                     <td>
                         <a href="#" class="btn btn-sm btn-outline-primary">Manage</a>
-
                         @if ($user->id !== auth()->id())
                             <form method="POST" action="#" class="d-inline">
                                 @csrf

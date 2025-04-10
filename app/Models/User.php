@@ -41,11 +41,6 @@ class User extends Authenticatable
         return $this->belongsTo(Merchant::class);
     }
 
-    public function team()
-    {
-        return $this->belongsTo(Team::class);
-    }
-
     public function inviter()
     {
         return $this->belongsTo(User::class, 'invited_by');

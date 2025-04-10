@@ -23,7 +23,7 @@ class AuthService
         }
 
         // Set the Spatie team context BEFORE fetching roles
-        app(PermissionRegistrar::class)->setPermissionsTeamId($user->team_id);
+        app(PermissionRegistrar::class)->setPermissionsTeamId($user->merchant_id);
 
         // Check password
         if (! Hash::check($credentials['password'], $user->password)) {

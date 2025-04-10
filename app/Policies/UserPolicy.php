@@ -12,7 +12,7 @@ class UserPolicy
     public function viewAny(User $user): bool
     {
 
-        if ($user->hasRole('super_admin') && $user->team_id === 1) {
+        if ($user->hasRole('super_admin') && $user->merchant_id === 1) {
             return true;
         }
 

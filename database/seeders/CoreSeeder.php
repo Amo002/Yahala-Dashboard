@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Team;
 use App\Models\User;
+use App\Models\Merchant;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Seeder;
@@ -14,37 +14,46 @@ class CoreSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create teams
-        $systemTeam = Team::firstOrCreate(['name' => 'system_team']);
-        $merchantTeam = Team::firstOrCreate(['name' => 'merchant_team']);
+        // 1. Create System Merchant first
+        $systemMerchant = Merchant::firstOrCreate(['id' => 1], [
+            'name' => 'System',
+            'address' => 'HQ',
+            'admin_id' => null,
+            'created_by' => null,
+            'active' => true,
+        ]);
 
-        // Set global Spatie team context
-        app(PermissionRegistrar::class)->setPermissionsTeamId($systemTeam->id);
-
-        // Create Super Admin User
+        // 2. Create Super Admin User
         $superAdmin = User::firstOrCreate(
             ['email' => 'admin@ex.com'],
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('admin'),
-                'team_id' => $systemTeam->id,
+                'merchant_id' => $systemMerchant->id,
             ]
         );
 
-        // Create Super Admin Role
+        // 3. Set admin_id for merchant
+        $systemMerchant->update(['admin_id' => $superAdmin->id]);
+        
+
+        // 4. Tell Spatie to use merchant_id as team_id context
+        app(PermissionRegistrar::class)->setPermissionsTeamId($systemMerchant->id);
+
+        // 5. Create Role
         $superAdminRole = Role::firstOrCreate([
             'name' => 'super_admin',
             'guard_name' => 'web',
-            'team_id' => $systemTeam->id,
-            'merchant_id' => null,
+            'merchant_id' => $systemMerchant->id,
             'created_by' => $superAdmin->id,
         ], [
-            'label' => 'Super Admin'
+            'label' => 'Super Admin',
+            'type' => 1, // 1 = system role
+            'privilege_level' => 1, // 1 = highest privilege (super admin)
         ]);
 
 
-
-        // Permission group: system
+        // 6. Define permissions
         $permissions = [
             ['name' => 'manage-users', 'label' => 'Manage Users', 'group' => 'users'],
             ['name' => 'manage-merchants', 'label' => 'Manage Merchants', 'group' => 'merchants'],
@@ -56,18 +65,16 @@ class CoreSeeder extends Seeder
             $permission = Permission::firstOrCreate([
                 'name' => $perm['name'],
                 'guard_name' => 'web',
-                'team_id' => $systemTeam->id,
             ], [
                 'label' => $perm['label'],
                 'group' => $perm['group'],
-                'merchant_id' => null,
                 'created_by' => $superAdmin->id,
             ]);
 
             $superAdminRole->givePermissionTo($permission);
         }
 
-        // Assign role to Super Admin
+        // 7. Assign Role to Super Admin under current merchant context
         $superAdmin->assignRole($superAdminRole);
     }
 }

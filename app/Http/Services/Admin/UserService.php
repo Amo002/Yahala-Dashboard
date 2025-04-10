@@ -7,20 +7,18 @@ use Spatie\Permission\PermissionRegistrar;
 
 class UserService
 {
-
-
-    public function getUsersFiltered(?string $teamName = null, ?int $merchantId = null)
+    public function getUsersFiltered(?int $merchantId = null)
     {
-        app(PermissionRegistrar::class)->setPermissionsTeamId(auth()->user()->team_id);
+        app(PermissionRegistrar::class)->setPermissionsTeamId(auth()->user()->merchant_id);
 
-        $query = User::with(['roles:id,name,label', 'team:id,name', 'merchant:id,name']);
-
-        if ($teamName) {
-            $query->whereHas('team', fn($q) => $q->where('name', $teamName));
-        }
+        $query = User::with(['roles:id,name,label', 'merchant:id,name', 'inviter:id,name']);
 
         if ($merchantId) {
+            // If merchant is selected, get ONLY that merchant’s users
             $query->where('merchant_id', $merchantId);
+        } else {
+            // Otherwise, show only system users (merchant_id = 1)
+            $query->where('merchant_id', 1);
         }
 
         return $query->get();

@@ -20,8 +20,4 @@ class Merchant extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function team()
-    {
-        return $this->belongsTo(Team::class);
-    }
 }

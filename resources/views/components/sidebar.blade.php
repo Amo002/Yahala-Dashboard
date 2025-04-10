@@ -15,6 +15,15 @@
                     </a>
                 </li>
             @endcan
+            @can('admin')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.merchants.index') ? 'active bg-primary text-white' : '' }}"
+                        href="{{ route('admin.merchants.index') }}">
+                        <i class="bi bi-shop me-2"></i> Merchants
+                    </a>
+                </li>
+            @endcan
+
         </ul>
     </div>
 </div>

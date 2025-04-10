@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        app(PermissionRegistrar::class)->setPermissionsTeamId(auth()->user()->team_id);
+        app(PermissionRegistrar::class)->setPermissionsTeamId(auth()->user()->merchant_id);
 
         Gate::authorize('viewAny', User::class);
 

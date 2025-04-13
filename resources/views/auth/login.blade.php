@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <title>Login - Yahala Dashboard</title>
@@ -9,28 +9,32 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body class="bg-light text-dark">
-
+<body class="bg-body-tertiary">
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100">
             <div class="col-md-6 col-lg-4">
-                <div class="card shadow border-0">
+                <div class="text-center mb-4">
+                    <h1 class="text-primary">
+                        <i class="bi bi-house-door"></i> Yahala
+                    </h1>
+                    <p class="text-muted">Admin Dashboard</p>
+                </div>
+
+                <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <h3 class="text-center mb-4">Admin Login</h3>
+                        <h3 class="text-center mb-4">Welcome Back</h3>
 
                         {{-- Flash Messages --}}
                         @if (session('status'))
-                            <div class="alert alert-success">{{ session('status') }}</div>
+                            <x-alert type="success" :message="session('status')" />
                         @endif
 
                         @if (session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
+                            <x-alert type="danger" :message="session('error')" />
                         @endif
 
                         @if ($errors->any())
-                            <div class="alert alert-danger">
-                                {{ $errors->first() }}
-                            </div>
+                            <x-alert type="danger" :message="$errors->first()" />
                         @endif
 
                         <form method="POST" action="{{ route('login.store') }}">
@@ -38,26 +42,38 @@
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input 
-                                    type="email" 
-                                    class="form-control @error('email') is-invalid @enderror" 
-                                    id="email" 
-                                    name="email" 
-                                    value="{{ old('email') }}" 
-                                    required 
-                                    autofocus
-                                >
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-envelope"></i>
+                                    </span>
+                                    <input 
+                                        type="email" 
+                                        class="form-control @error('email') is-invalid @enderror" 
+                                        id="email" 
+                                        name="email" 
+                                        value="{{ old('email') }}" 
+                                        required 
+                                        autofocus
+                                        placeholder="Enter your email"
+                                    >
+                                </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input 
-                                    type="password" 
-                                    class="form-control @error('password') is-invalid @enderror" 
-                                    id="password" 
-                                    name="password" 
-                                    required
-                                >
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock"></i>
+                                    </span>
+                                    <input 
+                                        type="password" 
+                                        class="form-control @error('password') is-invalid @enderror" 
+                                        id="password" 
+                                        name="password" 
+                                        required
+                                        placeholder="Enter your password"
+                                    >
+                                </div>
                             </div>
 
                             <div class="mb-3 form-check">
@@ -71,15 +87,15 @@
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
                             </button>
                         </form>
                     </div>
                 </div>
 
                 <p class="text-center mt-3">
-                    <a href="{{ route('welcome') }}" class="text-decoration-none text-muted">
-                        ← Back to welcome
+                    <a href="{{ route('welcome') }}" class="text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i> Back to welcome
                     </a>
                 </p>
             </div>

@@ -63,20 +63,37 @@ class UserService
     public function updateUserProfile(User $user, array $data): array
     {
         try {
-            $user->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'merchant_id' => $data['merchant_id'],
-            ]);
+            $user->update($data);
 
             return [
                 'status' => true,
-                'message' => 'User profile updated successfully.',
+                'message' => 'User profile updated successfully.'
             ];
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             return [
                 'status' => false,
-                'message' => 'Failed to update user profile.',
+                'message' => 'Failed to update user profile.'
+            ];
+        }
+    }
+
+    public function deleteUser(User $user): array
+    {
+        try {
+            // Remove all roles first
+            $user->roles()->detach();
+
+            // Delete the user
+            $user->delete();
+
+            return [
+                'status' => true,
+                'message' => 'User deleted successfully.'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'message' => 'Failed to delete user.'
             ];
         }
     }
@@ -128,5 +145,39 @@ class UserService
             'status' => true,
             'message' => 'All roles unassigned successfully.',
         ];
+    }
+    public function destroyUser(User $user): array
+    {
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId(1);
+
+
+        // Optional: Prevent deletion of Super Admin (or other protected users)
+        if ($user->id === 1) {
+            return [
+                'status'  => false,
+                'message' => 'Super Admin cannot be deleted.',
+            ];
+        }
+
+        try {
+            // Detach all roles assigned to the user
+            $user->roles()->detach();
+
+            // Now delete the user
+            $user->delete();
+
+            return [
+                'status'  => true,
+                'message' => 'User deleted successfully.',
+            ];
+        } catch (\Exception $e) {
+            // Optionally log the error for debugging
+            // \Log::error($e->getMessage());
+            return [
+                'status'  => false,
+                'message' => 'Failed to delete user.',
+            ];
+        }
     }
 }

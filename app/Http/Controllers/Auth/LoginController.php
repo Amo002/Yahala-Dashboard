@@ -36,17 +36,15 @@ class LoginController extends Controller
                 ->withInput();
         }
 
-        // Role-based redirection
-        switch ($result['role']) {
-            case 'super_admin':
-            case 'admin':
-                return redirect()->route('admin.dashboard')->with('status', $result['message']);
-            
-            case 'merchant':
-                return redirect()->route('merchant.dashboard')->with('status', $result['message']);
-            
-            default:
-                return redirect()->route('welcome')->with('status', $result['message']);
+        // Retrieve the roles from the result (an array of role names)
+        $roles = $result['roles'] ?? [];
+
+        if (in_array('super_admin', $roles) || in_array('admin', $roles)) {
+            return redirect()->route('admin.dashboard')->with('status', $result['message']);
+        } elseif (in_array('merchant', $roles) || in_array('merchant_admin', $roles)) {
+            return redirect()->route('merchant.dashboard')->with('status', $result['message']);
+        } else {
+            return redirect()->route('welcome')->with('status', $result['message']);
         }
     }
 }

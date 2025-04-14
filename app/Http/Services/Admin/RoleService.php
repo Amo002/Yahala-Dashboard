@@ -11,6 +11,9 @@ class RoleService
 {
     public function getSystemRoles()
     {
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId(1);
+
         return Role::query()
             ->select('roles.*')
             ->with('permissions')

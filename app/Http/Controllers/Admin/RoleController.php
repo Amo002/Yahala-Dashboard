@@ -8,7 +8,6 @@ use App\Http\Requests\Admin\CreateRoleRequest;
 use App\Http\Requests\Admin\RoleAssignUsersRequest;
 use App\Http\Requests\Admin\UpdateRoleRequest;
 use App\Http\Services\Admin\RoleService;
-use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller

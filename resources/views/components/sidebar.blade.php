@@ -1,6 +1,7 @@
 <div class="col-md-3 col-lg-2 d-md-block bg-body-tertiary border-end sidebar collapse">
     <div class="position-sticky pt-3">
         <ul class="nav flex-column">
+            {{-- Dashboard is typically available to all logged-in users --}}
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active bg-primary text-white' : 'text-body' }}"
                    href="{{ route('admin.dashboard') }}">
@@ -8,7 +9,7 @@
                 </a>
             </li>
 
-            @can('system-admin')
+            @can('view-users')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active bg-primary text-white' : 'text-body' }}"
                        href="{{ route('admin.users.index') }}">
@@ -17,7 +18,7 @@
                 </li>
             @endcan
 
-            @can('admin')
+            @can('view-merchants')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.merchants.index') ? 'active bg-primary text-white' : 'text-body' }}"
                        href="{{ route('admin.merchants.index') }}">
@@ -26,7 +27,7 @@
                 </li>
             @endcan
 
-            @can('system-admin')
+            @can('view-roles')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.roles.index') ? 'active bg-primary text-white' : 'text-body' }}"
                        href="{{ route('admin.roles.index') }}">

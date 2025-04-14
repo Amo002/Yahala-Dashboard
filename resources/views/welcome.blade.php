@@ -9,16 +9,18 @@
     <!-- Bootstrap 5 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    
+
     <style>
         body {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }
+
         .welcome-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 1rem;
         }
+
         .icon-wrapper {
             background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
             width: 100px;
@@ -44,11 +46,9 @@
                     <p class="lead text-center text-muted mb-4">Manage your merchants, users, and roles with ease.</p>
 
                     @auth
-                        @if (session('user_role') === 'super_admin')
-                            <a href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-lg w-100">
-                                <i class="bi bi-speedometer2 me-2"></i> Go to Dashboard
-                            </a>
-                        @endif
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-speedometer2 me-2"></i> Go to Dashboard
+                        </a>
                     @else
                         <a href="{{ route('login') }}" class="btn btn-primary btn-lg w-100">
                             <i class="bi bi-box-arrow-in-right me-2"></i> Login

@@ -3,11 +3,15 @@
 namespace App\Http\Services\Admin;
 
 use App\Models\Merchant;
+use Spatie\Permission\PermissionRegistrar;
 
 class MerchantService
 {
     public function getMerchants()
     {
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId(1); // system merchant
+
         return Merchant::where('id', '!=', 1)
             ->with('creator:id,name')
             ->latest()

@@ -23,18 +23,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('system-admin', function ($user) {
-            return in_array(
-                session('user_role'),
-                ['super_admin',]
-            );
-        });
-
-        Gate::define('admin', function ($user) {
-            return in_array(
-                session('user_role'),
-                ['super_admin', 'admin']
-            );
-        });
+        
     }
 }

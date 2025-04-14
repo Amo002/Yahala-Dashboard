@@ -22,7 +22,7 @@ class AuthService
             ];
         }
 
-        // Set the Spatie team context BEFORE fetching roles
+        // Set the Spatie team context BEFORE fetching roles.
         app(PermissionRegistrar::class)->setPermissionsTeamId($user->merchant_id);
 
         // Check password
@@ -43,17 +43,18 @@ class AuthService
             ];
         }
 
-        // Get role name (one role per user, as string)
-        $role = $user->getRoleNames()->first();
+        // Retrieve all role names (as an array)
+        $roles = $user->getRoleNames()->toArray();
 
-
-        Session::put('user_role', $role);
+        // Store all roles in the session
+        Session::put('user_roles', $roles);
 
         return [
             'status' => true,
             'message' => 'Login successful.',
-            'user' => $user,
-            'role' => $role,
+            'user'    => $user,
+            'roles'   => $roles,
         ];
     }
+
 }

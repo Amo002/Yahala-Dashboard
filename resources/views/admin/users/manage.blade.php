@@ -27,12 +27,18 @@
                 <h5 class="mb-0">User Profile</h5>
             </div>
             <div>
-                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
-                    <i class="bi bi-pencil me-1"></i> Edit Profile
-                </button>
-                <button class="btn btn-sm btn-outline-danger ms-2" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
-                    <i class="bi bi-trash3 me-1"></i> Delete User
-                </button>
+                @can('edit-users')
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                        <i class="bi bi-pencil me-1"></i> Edit Profile
+                    </button>
+                @endcan
+                @can('delete-users')
+                    @if($user->id !== auth()->id())
+                        <button class="btn btn-sm btn-outline-danger ms-2" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                            <i class="bi bi-trash3 me-1"></i> Delete User
+                        </button>
+                    @endif
+                @endcan
             </div>
         </div>
         <div class="card-body">
@@ -140,6 +146,7 @@
     </div>
 
     {{-- Assigned Role Card --}}
+    @can('view-roles')
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-body-tertiary border-0 d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
@@ -149,15 +156,17 @@
                 <h5 class="mb-0">Assigned Roles</h5>
             </div>
             <div>
-                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assignRoleModal">
-                    <i class="bi bi-shield-plus me-1"></i> Change Role
-                </button>
-                @if ($user->roles->isNotEmpty())
-                    <button class="btn btn-outline-danger btn-sm ms-2" data-bs-toggle="modal"
-                        data-bs-target="#unassignRoleModal">
-                        <i class="bi bi-shield-minus me-1"></i> Unassign All Roles
+                @can('assign-permissions')
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assignRoleModal">
+                        <i class="bi bi-shield-plus me-1"></i> Change Role
                     </button>
-                @endif
+                    @if ($user->roles->isNotEmpty())
+                        <button class="btn btn-outline-danger btn-sm ms-2" data-bs-toggle="modal"
+                            data-bs-target="#unassignRoleModal">
+                            <i class="bi bi-shield-minus me-1"></i> Unassign All Roles
+                        </button>
+                    @endif
+                @endcan
             </div>
         </div>
         <div class="card-body">
@@ -175,9 +184,11 @@
                                 @endforeach
                             </div>
                         </div>
-                        <a href="{{ route('admin.roles.manage', $role->id) }}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-gear me-1"></i> Manage Role
-                        </a>
+                        @can('edit-roles')
+                            <a href="{{ route('admin.roles.manage', $role->id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-gear me-1"></i> Manage Role
+                            </a>
+                        @endcan
                     </div>
                 @endforeach
             @else
@@ -190,8 +201,10 @@
             @endif
         </div>
     </div>
+    @endcan
 
     {{-- Edit User Modal --}}
+    @can('edit-users')
     <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" action="{{ route('admin.users.update', $user->id) }}"
@@ -265,11 +278,15 @@
             </form>
         </div>
     </div>
+    @endcan
 
     {{-- Delete User Modal --}}
+    @can('delete-users')
     <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" class="modal-content border-0 shadow">
+                @csrf
+                @method('DELETE')
                 <div class="modal-header border-0 bg-danger bg-gradient">
                     <h5 class="modal-title text-white">
                         <i class="bi bi-exclamation-triangle me-1"></i>
@@ -288,16 +305,18 @@
                 </div>
                 <div class="modal-footer border-0 bg-body-tertiary px-4">
                     <button type="button" class="btn btn-light border fw-medium" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger fw-medium px-4">
+                    <button type="submit" class="btn btn-danger fw-medium px-4">
                         <i class="bi bi-trash3 me-1"></i>
                         Delete User
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+    @endcan
 
     {{-- Assign Role Modal --}}
+    @can('assign-permissions')
     <div class="modal fade" id="assignRoleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content border-0 shadow">
@@ -382,9 +401,10 @@
             </div>
         </div>
     </div>
-
+    @endcan
 
     {{-- Unassign Role Modal --}}
+    @can('assign-permissions')
     <div class="modal fade" id="unassignRoleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content border-0 shadow">
@@ -419,6 +439,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 
 @push('styles')

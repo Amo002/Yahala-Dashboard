@@ -25,7 +25,7 @@ class CoreSeeder extends Seeder
 
         // 2. Create Super Admin User
         $superAdmin = User::firstOrCreate(
-            ['email' => 'admin@ex.com'],
+            ['email' => 'superadmin@ex.com'],
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('admin'),
@@ -35,9 +35,18 @@ class CoreSeeder extends Seeder
 
         // 3. Create 2 more users (no roles yet)
         User::firstOrCreate(
+            ['email' => 'admin@ex.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('admin'),
+                'merchant_id' => $systemMerchant->id,
+            ]
+        );
+
+        User::firstOrCreate(
             ['email' => 'editor@ex.com'],
             [
-                'name' => 'Editor User',
+                'name' => 'Editor',
                 'password' => Hash::make('editor'),
                 'merchant_id' => $systemMerchant->id,
             ]
@@ -46,7 +55,7 @@ class CoreSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'viewer@ex.com'],
             [
-                'name' => 'Viewer User',
+                'name' => 'Viewer',
                 'password' => Hash::make('viewer'),
                 'merchant_id' => $systemMerchant->id,
             ]

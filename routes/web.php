@@ -29,8 +29,7 @@ Route::middleware('no-cache')->group(function () {
         Route::post('/users/{user}/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}/unassign-role', [UserController::class, 'unassignRole'])->name('users.unassignRole');
-
-
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
         // Roles
         Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
@@ -44,5 +43,5 @@ Route::middleware('no-cache')->group(function () {
     });
 
 
-    Route::post(' /logout', [LogoutController::class, 'destroy'])->name('logout')->middleware('auth');
+    Route::post('/logout', [LogoutController::class, 'destroy'])->name('logout')->middleware('auth');
 });

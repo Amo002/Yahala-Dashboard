@@ -88,12 +88,17 @@
                 <h5 class="mb-0">Role Details</h5>
             </div>
             <div>
-                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editRoleModal">
-                    <i class="bi bi-pencil me-1"></i> Edit
-                </button>
-                <button class="btn btn-sm btn-outline-danger ms-2" data-bs-toggle="modal" data-bs-target="#deleteRoleModal">
-                    <i class="bi bi-trash3 me-1"></i> Delete
-                </button>
+                @can('edit-roles')
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editRoleModal">
+                        <i class="bi bi-pencil me-1"></i> Edit
+                    </button>
+                @endcan
+
+                @can('delete-roles')
+                    <button class="btn btn-sm btn-outline-danger ms-2" data-bs-toggle="modal" data-bs-target="#deleteRoleModal">
+                        <i class="bi bi-trash3 me-1"></i> Delete
+                    </button>
+                @endcan
             </div>
         </div>
         <div class="card-body">
@@ -164,9 +169,11 @@
                 </div>
                 <h5 class="mb-0">Assigned Permissions</h5>
             </div>
-            <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#assignPermissionsModal">
-                <i class="bi bi-key-fill me-1"></i> Assign Permissions
-            </button>
+            @can('assign-permissions')
+                <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#assignPermissionsModal">
+                    <i class="bi bi-key-fill me-1"></i> Assign Permissions
+                </button>
+            @endcan
         </div>
         <div class="card-body">
             @if ($role->permissions->isNotEmpty())
@@ -201,9 +208,11 @@
                         <h5 class="mb-0">Users with this Role</h5>
                     </div>
                 </div>
-                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assignUsersModal">
-                    <i class="bi bi-person-plus me-1"></i> Assign Users
-                </button>
+                @can('edit-roles')
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assignUsersModal">
+                        <i class="bi bi-person-plus me-1"></i> Assign Users
+                    </button>
+                @endcan
             </div>
         </div>
         <div class="card-body">
@@ -229,9 +238,9 @@
                                         <div class="flex-grow-1 ms-3">
                                             <div class="fw-bold">{{ $user->name }}</div>
                                             @if ($user->id === auth()->id())
-                                                <span
-                                                    class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle">
-                                                    You</span>
+                                                <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle">
+                                                    You
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
@@ -266,11 +275,9 @@
     </div>
 
     {{-- Assign Permissions Modal --}}
-    <div class="modal fade" id="assignPermissionsModal" tabindex="-1" aria-labelledby="assignPermissionsModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="assignPermissionsModal" tabindex="-1" aria-labelledby="assignPermissionsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
-            <form method="POST" action="{{ route('admin.roles.assignPermissions', $role->id) }}"
-                class="modal-content border-0 shadow">
+            <form method="POST" action="{{ route('admin.roles.assignPermissions', $role->id) }}" class="modal-content border-0 shadow">
                 @csrf
                 <div class="modal-header border-0 bg-primary bg-gradient">
                     <h5 class="modal-title text-white">Assign Permissions</h5>
@@ -294,8 +301,7 @@
                                     <h2 class="accordion-header rounded-3 shadow-sm">
                                         <button class="accordion-button collapsed bg-body rounded-3" type="button" 
                                             data-bs-toggle="collapse" 
-                                            data-bs-target="#collapse{{ $group }}"
-                                            aria-expanded="false">
+                                            data-bs-target="#collapse{{ $group }}" aria-expanded="false">
                                             <div class="d-flex align-items-center flex-grow-1">
                                                 <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
                                                     <i class="bi bi-folder2 text-primary"></i>
@@ -310,8 +316,8 @@
                                             <div class="row g-3">
                                                 @foreach ($permissions as $permission)
                                                     <div class="col-12 col-md-6">
-                                                        <div class="d-flex align-items-center bg-body rounded-3 p-3 border shadow-sm hover-shadow transition-all">
-                                                            <div class="form-check form-switch me-3">
+                                                        <div class="d-flex align-items-center bg-body rounded-3 p-2 border border-2 shadow-sm hover-shadow transition-all">
+                                                            <div class="form-check form-switch me-2">
                                                                 <input class="form-check-input permission-checkbox permission-group-{{ $group }}"
                                                                     type="checkbox"
                                                                     name="permissions[]"
@@ -320,8 +326,7 @@
                                                                     onchange="updatePermissionCount(); updateGroupCount('{{ $group }}')"
                                                                     {{ $role->permissions->contains('id', $permission['id']) ? 'checked' : '' }}>
                                                             </div>
-                                                            <label class="small fw-medium text-body user-select-none w-100" 
-                                                                for="perm_{{ $permission['id'] }}">
+                                                            <label class="small fw-medium text-body user-select-none w-100" for="perm_{{ $permission['id'] }}">
                                                                 {{ $permission['label'] ?? $permission['name'] }}
                                                             </label>
                                                         </div>
@@ -348,8 +353,7 @@
     {{-- Edit Role Modal --}}
     <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="{{ route('admin.roles.update', $role->id) }}"
-                class="modal-content border-0 shadow">
+            <form method="POST" action="{{ route('admin.roles.update', $role->id) }}" class="modal-content border-0 shadow">
                 @csrf
                 @method('PUT')
                 <div class="modal-header border-0 bg-primary bg-gradient">
@@ -398,11 +402,9 @@
     </div>
 
     {{-- Delete Role Modal --}}
-    <div class="modal fade" id="deleteRoleModal" tabindex="-1" aria-labelledby="deleteRoleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="deleteRoleModal" tabindex="-1" aria-labelledby="deleteRoleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form method="POST" action="{{ route('admin.roles.destroy', $role->id) }}"
-                class="modal-content border-0 shadow">
+            <form method="POST" action="{{ route('admin.roles.destroy', $role->id) }}" class="modal-content border-0 shadow">
                 @csrf
                 @method('DELETE')
                 <div class="modal-header border-0 bg-danger bg-gradient">
@@ -424,16 +426,13 @@
                         <div class="alert alert-warning d-flex align-items-center mb-0">
                             <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
                             <div>
-                                This will remove this role from <strong>{{ $userCount }}</strong> assigned
-                                {{ Str::plural('user', $userCount) }}.
+                                This will remove this role from <strong>{{ $userCount }}</strong> assigned {{ Str::plural('user', $userCount) }}.
                             </div>
                         </div>
                     @else
                         <div class="alert alert-info d-flex align-items-center mb-0">
                             <i class="bi bi-info-circle-fill text-info me-2"></i>
-                            <div>
-                                This role is not assigned to any users. It can be safely deleted.
-                            </div>
+                            <div>This role is not assigned to any users. It can be safely deleted.</div>
                         </div>
                     @endif
                 </div>
@@ -475,8 +474,7 @@
                             </div>
                             <div class="vstack gap-2">
                                 @foreach ($allUsers ?? [] as $user)
-                                    <div
-                                        class="d-flex align-items-center justify-content-between p-3 rounded bg-body-secondary">
+                                    <div class="d-flex align-items-center justify-content-between p-3 rounded bg-body-secondary">
                                         <div class="d-flex align-items-center gap-3">
                                             <div class="p-2 rounded bg-primary-subtle">
                                                 <i class="bi bi-person text-primary-emphasis"></i>
@@ -488,9 +486,9 @@
                                         </div>
                                         <div class="form-check form-switch m-0">
                                             <input class="form-check-input" type="checkbox" name="user_ids[]"
-                                                id="user_{{ $user->id }}" value="{{ $user->id }}"
-                                                onchange="updateUserCount()"
-                                                {{ $user->roles->contains('id', $role->id) ? 'checked' : '' }}>
+                                                   id="user_{{ $user->id }}" value="{{ $user->id }}"
+                                                   onchange="updateUserCount()"
+                                                   {{ $user->roles->contains('id', $role->id) ? 'checked' : '' }}>
                                         </div>
                                     </div>
                                 @endforeach
@@ -539,35 +537,10 @@
 
 @push('styles')
     <style>
-        /* Existing styles... */
-
-        .hover-shadow {
-            transition: all 0.2s ease-in-out;
-        }
-
-        .hover-shadow:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-primary-rgb), 0.1) !important;
-        }
-
-        .transition-all {
-            transition: all 0.2s ease-in-out;
-        }
-
-        .accordion-button:not(.collapsed) {
-            background-color: var(--bs-primary-bg-subtle);
-            color: var(--bs-primary);
-        }
-
-        .accordion-button:focus {
-            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
-        }
-
-        /* Custom switch styling */
+        /* Only essential form-check-input styling that Bootstrap doesn't provide */
         .form-check-input {
             width: 3em;
             height: 1.5em;
-            cursor: pointer;
         }
 
         .form-check-input:checked {
@@ -580,13 +553,12 @@
             box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
         }
 
-        /* Dark mode adjustments */
-        [data-bs-theme="dark"] .accordion-button:not(.collapsed) {
-            background-color: rgba(var(--bs-primary-rgb), 0.2);
+        [data-bs-theme="light"] .list-group-item:hover {
+            background-color: var(--bs-light) !important;
         }
 
-        [data-bs-theme="dark"] .hover-shadow:hover {
-            box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-primary-rgb), 0.2) !important;
+        [data-bs-theme="dark"] .list-group-item:hover {
+            background-color: var(--bs-dark) !important;
         }
     </style>
 @endpush
@@ -661,7 +633,6 @@
         // Unassign User Modal script:
         document.addEventListener('DOMContentLoaded', () => {
             const unassignButtons = document.querySelectorAll('.unassign-user-btn');
-            const unassignModal = document.getElementById('unassignUserModal');
             const unassignForm = document.getElementById('unassignUserForm');
             const unassignUserNameEl = document.getElementById('unassignUserName');
 

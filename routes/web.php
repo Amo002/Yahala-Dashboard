@@ -39,6 +39,8 @@ Route::middleware('no-cache')->group(function () {
         Route::post('/roles/{role}/permissions', [RoleController::class, 'assignPermissions'])->name('roles.assignPermissions');
         Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+        Route::post('/roles/{role}/assign-users', [RoleController::class, 'assignUsers'])->name('roles.assignUsers');
+        Route::delete('/roles/{role}/unassign-user/{user}', [RoleController::class, 'unassignUser'])->name('roles.unassignUser');
     });
 
 

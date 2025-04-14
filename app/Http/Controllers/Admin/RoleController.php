@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AssignPermissionRequest;
 use App\Http\Requests\Admin\CreateRoleRequest;
+use App\Http\Requests\Admin\RoleAssignUsersRequest;
 use App\Http\Requests\Admin\UpdateRoleRequest;
 use App\Http\Services\Admin\RoleService;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -62,5 +64,21 @@ class RoleController extends Controller
 
         return redirect()->route('admin.roles.index')
             ->with($result['status'] ? 'status' : 'error', $result['message']);
+    }
+
+    public function unassignUser($roleId, $userId)
+    {
+        $result = $this->roleService->unassignUserFromRole($roleId, (int)$userId);
+
+        return redirect()->back()
+            ->with($result['status'] ? 'status' : 'error', $result['message']);
+    }
+
+    public function assignUsers(RoleAssignUsersRequest $request, Role $role)
+    {
+        $result = $this->roleService->assignUsers($role, $request->validated());
+        return $result['status']
+            ? redirect()->back()->with('status', $result['message'])
+            : redirect()->back()->with('error', $result['message']);
     }
 }

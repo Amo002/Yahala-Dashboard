@@ -66,7 +66,7 @@
                 <div class="col-md-6">
                     <div class="d-flex align-items-center p-3 rounded bg-body-tertiary border h-100">
                         <div class="flex-shrink-0">
-                            @if($user->merchant_id === 1)
+                            @if ($user->merchant_id === 1)
                                 <div class="bg-primary bg-opacity-10 rounded-circle p-3">
                                     <i class="bi bi-gear-fill text-primary fs-4"></i>
                                 </div>
@@ -81,7 +81,7 @@
                                 {{ $user->merchant_id === 1 ? 'Admin Team' : 'Merchant Name' }}
                             </h6>
                             <p class="text-body fw-bold mb-0">
-                                {{ $user->merchant_id === 1 ? 'System Administrator' : ($user->merchant->name ?? 'Not set') }}
+                                {{ $user->merchant_id === 1 ? 'System Administrator' : $user->merchant->name ?? 'Not set' }}
                             </p>
                         </div>
                     </div>
@@ -146,7 +146,7 @@
                 <div class="bg-primary bg-opacity-10 rounded p-2 me-3">
                     <i class="bi bi-shield text-primary"></i>
                 </div>
-                <h5 class="mb-0">Assigned Role</h5>
+                <h5 class="mb-0">Assigned Roles</h5>
             </div>
             <div>
                 <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assignRoleModal">
@@ -155,7 +155,7 @@
                 @if ($user->roles->isNotEmpty())
                     <button class="btn btn-outline-danger btn-sm ms-2" data-bs-toggle="modal"
                         data-bs-target="#unassignRoleModal">
-                        <i class="bi bi-shield-minus me-1"></i> Unassign Role
+                        <i class="bi bi-shield-minus me-1"></i> Unassign All Roles
                     </button>
                 @endif
             </div>
@@ -165,7 +165,7 @@
                 @foreach ($user->roles as $role)
                     <div class="d-flex align-items-center justify-content-between p-3 rounded bg-body-tertiary border mb-3">
                         <div>
-                            <h6 class="mb-2">{{ $role->label ?? $role->name }}</h6>
+                            <h6 class="mb-2 text-body">{{ $role->label ?? $role->name }}</h6>
                             <div class="d-flex flex-wrap gap-2">
                                 @foreach ($role->permissions as $permission)
                                     <div class="d-flex align-items-center bg-info bg-opacity-10 rounded-pill px-3 py-1">
@@ -181,8 +181,8 @@
                     </div>
                 @endforeach
             @else
-                <div class="text-center py-4 text-muted">
-                    <div class="bg-body-secondary rounded-circle d-inline-flex p-3 mb-3">
+                <div class="text-center py-4 text-body-secondary">
+                    <div class="bg-body-tertiary rounded-circle d-inline-flex p-3 mb-3">
                         <i class="bi bi-shield-slash fs-4"></i>
                     </div>
                     <p class="mb-0">No role assigned to this user</p>
@@ -313,36 +313,62 @@
                         class="needs-validation" novalidate>
                         @csrf
                         <div class="mb-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
-                                    <i class="bi bi-shield text-primary"></i>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary bg-opacity-10 rounded p-2 me-2">
+                                        <i class="bi bi-shield text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Assign Roles</h6>
+                                        <small class="text-body-secondary">Toggle roles to manage user permissions</small>
+                                    </div>
                                 </div>
-                                <h6 class="mb-0">Select a Role</h6>
+                                <div class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle">
+                                    <span id="selectedRolesCount">0</span> Roles Selected
+                                </div>
                             </div>
-                            <select class="form-select shadow-sm" name="role_id" required>
-                                <option value="" disabled selected>Choose a role...</option>
+
+                            <div class="vstack gap-2">
                                 @foreach ($availableRoles as $role)
-                                    <option value="{{ $role->id }}"
-                                        {{ $user->roles->contains($role->id) ? 'selected' : '' }}>
-                                        {{ $role->label ?? $role->name }}
-                                    </option>
+                                    <div class="list-group-item border rounded-3 bg-body-secondary bg-opacity-50">
+                                        <div class="d-flex align-items-center justify-content-between p-2">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="p-2 rounded-2 bg-primary-subtle">
+                                                    <i class="bi bi-shield-check text-primary-emphasis"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-medium text-body">{{ $role->label ?? $role->name }}
+                                                    </div>
+                                                    @if ($role->description)
+                                                        <div class="small text-body-secondary">{{ $role->description }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                    name="role_ids[]" id="role_{{ $role->id }}"
+                                                    value="{{ $role->id }}" onchange="updateRoleCount()"
+                                                    {{ $user->roles->contains($role->id) ? 'checked' : '' }}>
+                                                <label class="form-check-label visually-hidden"
+                                                    for="role_{{ $role->id }}">
+                                                    Toggle {{ $role->label ?? $role->name }} role
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 @endforeach
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select a role.
                             </div>
                         </div>
-                        <div class="alert alert-info">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <i class="bi bi-info-circle-fill text-info"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <p class="mb-0">Changing the role will update the user's permissions. Make sure to
-                                        review the permissions associated with the selected role.</p>
-                                </div>
+
+                        <div
+                            class="alert alert-primary bg-primary-subtle border-primary-subtle d-flex align-items-center mb-0">
+                            <i class="bi bi-info-circle-fill text-primary-emphasis me-2"></i>
+                            <div class="text-primary-emphasis">
+                                Changes to role assignments will automatically update the user's permissions.
                             </div>
                         </div>
+
                         <div class="modal-footer border-0 bg-body-tertiary px-4">
                             <button type="button" class="btn btn-light border fw-medium"
                                 data-bs-dismiss="modal">Cancel</button>
@@ -357,6 +383,7 @@
         </div>
     </div>
 
+
     {{-- Unassign Role Modal --}}
     <div class="modal fade" id="unassignRoleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -364,7 +391,7 @@
                 <div class="modal-header border-0 bg-danger bg-gradient">
                     <h5 class="modal-title text-white">
                         <i class="bi bi-shield-minus me-1"></i>
-                        Unassign Role
+                        Unassign All Roles
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -373,25 +400,77 @@
                         <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex p-4 mb-3">
                             <i class="bi bi-shield-x text-danger fs-2"></i>
                         </div>
-                        <h5 class="mb-2">Remove Role from "{{ $user->name }}"?</h5>
-                        <p class="text-body-secondary mb-0">This user will lose all associated permissions.</p>
+                        <h5 class="mb-2">Remove All Roles from "{{ $user->name }}"?</h5>
+                        <p class="text-body-secondary mb-0">This user will lose all associated roles and permissions.</p>
                     </div>
                 </div>
                 <div class="modal-footer border-0 bg-body-tertiary px-4">
                     <form method="POST" action="{{ route('admin.users.unassignRole', $user->id) }}">
                         @csrf
                         @method('DELETE')
-                        <div class="modal-footer border-0 bg-body-tertiary px-4">
-                            <button type="button" class="btn btn-light border fw-medium"
-                                data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger fw-medium px-4">
-                                <i class="bi bi-shield-x me-1"></i>
-                                Unassign Role
-                            </button>
-                        </div>
+                        <button type="button" class="btn btn-light border fw-medium"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger fw-medium px-4">
+                            <i class="bi bi-shield-x me-1"></i>
+                            Unassign Role
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        /* Only essential form-check-input styling that Bootstrap doesn't provide */
+        .form-check-input {
+            width: 3em;
+            height: 1.5em;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+        }
+
+        .form-check-input:focus {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+        }
+
+        [data-bs-theme="light"] .list-group-item:hover {
+            background-color: var(--bs-light) !important;
+        }
+
+        [data-bs-theme="dark"] .list-group-item:hover {
+            background-color: var(--bs-dark) !important;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+<script>
+    function updateRoleCount(modal) {
+        const counter = modal.querySelector('#selectedRolesCount');
+        const checked = modal.querySelectorAll('input[name="role_ids[]"]:checked').length;
+        if (counter) counter.textContent = checked;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalEl = document.getElementById('assignRoleModal');
+
+        // Ensure modal is initialized properly via Bootstrap API
+        const bsModal = new bootstrap.Modal(modalEl);
+
+        modalEl.addEventListener('shown.bs.modal', () => {
+            updateRoleCount(modalEl);
+
+            const checkboxes = modalEl.querySelectorAll('input[name="role_ids[]"]');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', () => updateRoleCount(modalEl));
+            });
+        });
+    });
+</script>
+@endpush

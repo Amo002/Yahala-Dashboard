@@ -44,84 +44,21 @@ class UserService
     }
 
 
-    public function assignRoleToUser(User $user, int $roleId): array
-    {
-        if (! $this->canManageRoles()) {
-            return [
-                'status' => false,
-                'message' => 'You do not have permission to assign roles.',
-            ];
-        }
-
-        app(PermissionRegistrar::class)->setPermissionsTeamId(1);
-
-        $role = Role::where('id', $roleId)
-            ->where('merchant_id', 1)
-            ->first();
-
-        if (! $role) {
-            return [
-                'status' => false,
-                'message' => 'Role not found or not assignable.',
-            ];
-        }
-
-        if ($user->hasRole($role)) {
-            return [
-                'status' => false,
-                'message' => 'User already has this role.',
-            ];
-        }
-
-        $user->syncRoles([$role->name]);
-
-        return [
-            'status' => true,
-            'message' => 'Role assigned successfully.',
-        ];
-    }
-
-
-    public function unassignUserRole(User $user): array
-    {
-        if (! $this->canManageRoles()) {
-            return [
-                'status' => false,
-                'message' => 'You do not have permission to unassign roles.',
-            ];
-        }
-
-        app(PermissionRegistrar::class)->setPermissionsTeamId(1);
-
-        $currentRole = $user->roles()->first();
-
-        if (! $currentRole) {
-            return [
-                'status' => false,
-                'message' => 'User has no role to unassign.',
-            ];
-        }
-
-        $user->removeRole($currentRole->name);
-
-        return [
-            'status' => true,
-            'message' => 'Role unassigned successfully.',
-        ];
-    }
-
-
     private function canManageRoles(): bool
     {
         app(PermissionRegistrar::class)->setPermissionsTeamId(1);
 
         $authUser = auth()->user();
-        $authRole = $authUser->roles()->first(); // Assuming single role
 
-        $privilegeLevel = $authRole?->privilege_level ?? 99;
+        // Get the lowest privilege level among all roles
+        $privilegeLevel = $authUser->roles
+            ->pluck('privilege_level')
+            ->filter() // in case null
+            ->min() ?? 99;
 
         return $privilegeLevel <= 2;
     }
+
 
     public function updateUserProfile(User $user, array $data): array
     {
@@ -142,5 +79,54 @@ class UserService
                 'message' => 'Failed to update user profile.',
             ];
         }
+    }
+
+    public function assignRolesToUser(User $user, array $data): array
+    {
+        if (! $this->canManageRoles()) {
+            return [
+                'status' => false,
+                'message' => 'You do not have permission to assign roles.',
+            ];
+        }
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId(1);
+
+        $roleIds = $data['role_ids'] ?? [];
+
+        $validRoles = Role::whereIn('id', $roleIds)
+            ->where('merchant_id', 1)
+            ->pluck('name')
+            ->toArray();
+
+        $user->syncRoles($validRoles);
+
+        return [
+            'status' => true,
+            'message' => count($validRoles)
+                ? 'Roles assigned successfully.'
+                : 'All roles removed from user.',
+        ];
+    }
+
+
+    public function unassignUserRole(User $user): array
+    {
+        if (! $this->canManageRoles()) {
+            return [
+                'status' => false,
+                'message' => 'You do not have permission to unassign roles.',
+            ];
+        }
+
+        app(PermissionRegistrar::class)->setPermissionsTeamId(1);
+
+        // Detach all roles
+        $user->roles()->detach();
+
+        return [
+            'status' => true,
+            'message' => 'All roles unassigned successfully.',
+        ];
     }
 }

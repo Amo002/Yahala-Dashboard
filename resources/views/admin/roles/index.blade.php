@@ -24,6 +24,7 @@
                         <tr>
                             <th class="border-0">Name</th>
                             <th class="border-0">Permissions</th>
+                            <th class="border-0">Created By</th>
                             <th class="border-0" style="width: 100px;">Actions</th>
                         </tr>
                     </thead>
@@ -46,24 +47,32 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.roles.manage', $role->id) }}"
-                                        class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    @if ($role->users_count === 0)
-                                        <form method="POST" action="#" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    @endif
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person-badge text-primary me-2"></i>
+                                        <span class="fw-medium">{{ $role->creator_name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('admin.roles.manage', $role->id) }}"
+                                            class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        @if ($role->users_count === 0)
+                                            <form method="POST" action="#" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center py-4">
+                                <td colspan="4" class="text-center py-4">
                                     <div class="text-muted">
                                         <i class="bi bi-shield-lock display-6"></i>
                                         <p class="mt-2 mb-0">No roles found</p>

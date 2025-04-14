@@ -27,11 +27,11 @@ class UserController extends Controller
 
     public function assignRole(AssignUserRoleRequest $request, User $user, UserService $userService)
     {
-
-        $result = $userService->assignRoleToUser($user, $request->validated()['role_id']);
+        $result = $userService->assignRolesToUser($user, $request->validated());
 
         return back()->with($result['status'] ? 'status' : 'error', $result['message']);
     }
+
 
     public function unassignRole(User $user, UserService $userService)
     {

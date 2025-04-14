@@ -14,10 +14,18 @@ class AssignUserRoleRequest extends FormRequest
 
     public function rules(): array
     {
-        $validIds = Role::where('merchant_id', 1)->pluck('id')->implode(',');
+        $validIds = Role::where('merchant_id', 1)->pluck('id')->toArray();
 
         return [
-            'role_id' => ['required', 'integer', 'in:' . $validIds],
+            'role_ids' => ['nullable', 'array'],
+            'role_ids.*' => ['integer', 'in:' . implode(',', $validIds)],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'role_ids.*.in' => 'One or more selected roles are invalid.',
         ];
     }
 }

@@ -32,7 +32,23 @@
                                 </td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->inviter?->name ?? 'System Seeder' }}</td>
-                                <td>{{ $user->roles->pluck('label')->filter()->join(', ') }}</td>
+                                <td>
+                                    @if($user->roles->isNotEmpty())
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach($user->roles as $role)
+                                                <span class="badge bg-primary-subtle text-primary-emphasis border border-primary-subtle">
+                                                    <i class="bi bi-shield-check me-1"></i>
+                                                    {{ $role->label ?? $role->name }}
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">
+                                            <i class="bi bi-shield-slash me-1"></i>
+                                            No Roles
+                                        </span>
+                                    @endif
+                                </td>
                                 <td>
                                     <a href="{{ route('admin.users.manage', $user->id) }}"
                                         class="btn btn-sm btn-outline-primary">
